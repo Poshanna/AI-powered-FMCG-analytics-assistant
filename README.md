@@ -1,150 +1,199 @@
+AI-Powered FMCG Analytics Assistant
 
-# AI-Powered FMCG Analytics Assistant
+An intelligent conversational analytics platform that enables FMCG stakeholders to interact with business data using natural language. Users can ask questions about sales, promotions, inventory, and regional performance, while the system automatically generates SQL queries, retrieves insights from the database, visualizes results, and provides AI-powered business interpretations.
 
-A conversational AI assistant that allows business users to query FMCG (Fast-Moving Consumer Goods) data using natural language, powered by Google Gemini and Streamlit.
+🌐 Live Demo: https://ai-powered-fmcg-analytics-assistant-tfexzq4jk8teqcwr9chrw4.streamlit.app/
 
-## Project Overview
+🚀 Features
+💬 Natural Language Querying
+Ask business questions in plain English without SQL knowledge.
+🤖 AI-Powered Text-to-SQL
+Uses Google Gemini to convert user questions into valid SQLite queries.
+🔒 SQL Validation Layer
+Ensures only safe SELECT queries are executed.
+Blocks destructive operations such as INSERT, UPDATE, DELETE, DROP, and ALTER.
+📊 Interactive Visualizations
+Automatically generates charts for query results using Plotly.
+📈 Business Insight Generation
+Produces concise, AI-generated explanations and interpretations of analytical outputs.
+🏪 Synthetic FMCG Dataset
+Built using realistic business rules covering sales, inventory, promotions, products, and store operations.
+☁️ Cloud Deployment
+Fully deployed using Streamlit Cloud.
+🏗️ System Architecture
+Business User
+     ↓
+Streamlit Interface
+     ↓
+Google Gemini API
+(Text-to-SQL)
+     ↓
+SQL Validator
+     ↓
+SQLite Database
+     ↓
+Query Executor
+     ↓
+Plotly Visualizations
+     ↓
+Insight Generator
+     ↓
+Business Insights
+📂 Project Structure
+AI-powered-FMCG-analytics-assistant/
+│
+├── app.py
+├── init_db.py
+├── fmcg.db
+├── requirements.txt
+├── README.md
+├── sales.csv
+├── inventory.csv
+├── products.csv
+├── stores.csv
+├── screenshots/
+├── tests/
+│   ├── test_query_executor.py
+│   ├── test_sql_validator.py
+│   └── test_visualizer.py
+│
+└── utils/
+    ├── __init__.py
+    ├── llm.py
+    ├── sql_generator.py
+    ├── sql_validator.py
+    ├── query_executor.py
+    ├── visualizer.py
+    └── insight_generator.py
+📊 Synthetic Dataset
 
-This application bridges the gap between business users and data analysts by enabling natural language questions about sales, inventory, promotions, and store performance. The assistant handles intent understanding, SQL generation, query validation, execution, visualization, and insight generation in a single seamless workflow.
+Since no real dataset was provided, a synthetic FMCG beverage dataset was created to simulate realistic business operations.
 
-## Architecture
+Dataset Composition
+24 weeks of historical data
+20 beverage products
+40 retail stores
+4 geographical regions
+Multiple store formats:
+Supermarkets
+Hypermarkets
+Convenience Stores
+Wholesale Outlets
+Dataset Files
+sales.csv
+inventory.csv
+products.csv
+stores.csv
+🧠 Edge Case Modeling
 
-```
-User Question
-    ↓
-Gemini Intent Understanding
-    ↓
-Text-to-SQL Generation
-    ↓
-SQL Validation Layer
-    ↓
-SQLite Query Execution
-    ↓
-Plotly Visualization
-    ↓
-Gemini Business Insight Generation
-    ↓
-Response to User
-```
+The dataset was intentionally designed to capture real-world complexities.
 
-## Features
+Promotion Variability
+Price Cut campaigns
+Buy-One-Get-One (BOGO) offers
+Display promotions
+Low-performing promotions
+Stockout Scenarios
+Inventory depletion
+Lost sales opportunities
+Closing stock reaching zero
+Regional Differences
+Region-specific purchasing patterns
+Varying product preferences
+Store Behavior
+Higher demand in Hypermarkets
+Lower inventory in Convenience Stores
+Bulk purchasing in Wholesale outlets
+🔧 Technology Stack
+Frontend
+Streamlit
+Backend
+Python
+Database
+SQLite
+AI Layer
+Google Gemini API
+Data Processing
+Pandas
+Visualization
+Plotly
+Testing
+Pytest
+💡 Example Questions
 
-- 🗣️ **Natural Language Interface**: Ask questions in plain English
-- 🔍 **Text-to-SQL Generation**: Powered by Google Gemini
-- ✅ **SQL Validation**: Security and syntax checks before execution
-- 📊 **Interactive Visualizations**: Auto-generated charts with Plotly
-- 💡 **Business Insights**: AI-generated actionable insights
-- 📱 **Clean UI**: Built with Streamlit for ease of use
+Users can ask questions such as:
 
-## Example Questions
+Which region generated the highest revenue?
+Compare North and South sales.
+Which products had the highest stockouts?
+Did BOGO promotions improve sales?
+What were the top-selling products?
+Which store formats performed best?
+Which categories generated the highest revenue?
+Identify trends in weekly sales performance.
+🔒 Security and Validation
 
-Try asking questions like:
+To ensure safe execution:
 
-- Which region generated the highest revenue?
-- Compare North and South sales performance.
-- Which products experienced the most stockouts?
-- Did BOGO promotions improve sales?
-- What were the top-selling products?
-- Which store formats performed best?
-- Which promotion type delivered the highest uplift?
-- Which categories performed best during promotions?
+Only SELECT statements are permitted.
+SQL syntax is validated before execution.
+Database schema compliance is enforced.
+Dangerous SQL keywords are blocked.
+Query execution is isolated from user input.
+⚙️ Installation and Local Setup
+Clone the Repository
+git clone https://github.com/YOUR_USERNAME/AI-powered-FMCG-analytics-assistant.git
+cd AI-powered-FMCG-analytics-assistant
+Install Dependencies
+pip install -r requirements.txt
+Configure Gemini API Key
 
-## Local Setup
+Create a .streamlit/secrets.toml file:
 
-### Prerequisites
+GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"
 
-- Python 3.9 or higher
-- Google Gemini API key (get one from [Google AI Studio](https://aistudio.google.com/))
+Alternatively, add the same secret in Streamlit Cloud.
 
-### Installation
+Run the Application
+streamlit run app.py
+☁️ Deployment
 
-1. Clone or download this repository
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Initialize the database (if needed):
-   ```bash
-   python init_db.py
-   ```
-4. Run the application:
-   ```bash
-   streamlit run app.py
-   ```
+The application is deployed on Streamlit Cloud.
 
-## Environment Variable Setup
+Live Application
 
-For local development, you can set the API key in two ways:
+https://ai-powered-fmcg-analytics-assistant-tfexzq4jk8teqcwr9chrw4.streamlit.app/
 
-### Option 1: Enter in UI
-Run the app and enter your API key directly in the web interface.
+🧪 Testing
 
-### Option 2: Environment Variable
-Set the `GEMINI_API_KEY` environment variable:
+Run the unit tests using:
 
-**Windows (PowerShell):**
-```powershell
-$env:GEMINI_API_KEY="your-api-key-here"
-```
+pytest
 
-**macOS/Linux:**
-```bash
-export GEMINI_API_KEY="your-api-key-here"
-```
+Tests cover:
 
-## Streamlit Deployment
+SQL validation
+Query execution
+Visualization generation
+🚧 Challenges Faced
+Managing Gemini API quota limitations.
+Handling invalid SQL generated by the LLM.
+Implementing a secure validation layer.
+Designing realistic synthetic datasets without access to real FMCG data.
+Deploying API-based applications using Streamlit Secrets.
+📌 Future Enhancements
+Support for PostgreSQL and MySQL.
+Conversational memory for follow-up queries.
+Downloadable reports and exports.
+Sales forecasting and predictive analytics.
+Role-based authentication and access control.
+Fallback SQL generation for offline operation.
+👨‍💻 Author
 
-The application is ready to deploy to Streamlit Cloud!
+Poshanna Durki
 
-1. Push your code to GitHub
-2. Go to [Streamlit Cloud](https://streamlit.io/cloud)
-3. Create a new app and connect your repository
-4. In the app settings, add a secret with key `GEMINI_API_KEY` and your API key as the value
+AI & Machine Learning Enthusiast passionate about building practical AI applications that bridge the gap between complex data systems and business decision-making.
 
-## Project Structure
+📜 License
 
-```
-fmcg-ai-assistant/
-├── app.py                      # Main Streamlit app
-├── init_db.py                  # Database initialization script
-├── requirements.txt            # Python dependencies
-├── README.md                   # This file
-├── fmcg.db                     # SQLite database (generated)
-├── utils/                      # Utility modules
-│   ├── llm.py                  # LLM handling
-│   ├── sql_generator.py        # Text-to-SQL
-│   ├── sql_validator.py        # SQL validation
-│   ├── query_executor.py       # Query execution
-│   ├── visualizer.py           # Visualization generation
-│   └── insight_generator.py    # Business insights
-├── .streamlit/
-│   └── secrets.toml.example    # Example secrets config
-├── tests/                      # Test cases
-└── screenshots/                # Screenshots directory
-```
-
-## Limitations
-
-- **SQL Generation**: While powerful, the LLM may occasionally generate invalid or suboptimal SQL for very complex queries
-- **Data Scope**: Limited to the data available in the SQLite database
-- **Conversational Memory**: Current version doesn't maintain context across multiple questions
-- **Visualization**: Chart type selection is heuristic and may not always be optimal
-
-## Future Improvements (Version 2)
-
-- [ ] **Conversational Memory**: Maintain context across multiple questions for follow-up queries
-- [ ] **Multi-Agent Validation**: Add a second LLM check for critical queries
-- [ ] **Role-Based Access Control**: Different permissions for different user roles
-- [ ] **Enterprise Database Connectivity**: Support for PostgreSQL, BigQuery, Snowflake, etc.
-- [ ] **Fine-Tuned Text-to-SQL Model**: Train a custom model on FMCG-specific queries
-- [ ] **Query History**: Save and revisit past queries
-- [ ] **Export Options**: Export results to Excel/PDF
-- [ ] **Scheduled Reports**: Generate and send reports on a schedule
-
-## License
-
-MIT License
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+This project was developed as part of an AI assessment submission and is intended for educational and demonstration purposes.
