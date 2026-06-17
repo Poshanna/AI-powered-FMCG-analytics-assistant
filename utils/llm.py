@@ -17,7 +17,7 @@ class LLMHandler:
             raise ValueError("GEMINI_API_KEY must be provided")
         
         genai.configure(api_key=self.api_key)
-        self.model = genai.GenerativeModel("gemini-2.0-flash")
+        self.model = genai.GenerativeModel("gemini-2.5-flash")
     
     def generate(self, prompt: str, temperature: float = 0.1) -> str:
         try:
