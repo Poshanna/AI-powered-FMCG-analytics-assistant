@@ -1,0 +1,21 @@
+product_id,product_name,brand,category,pack_size_ml,unit_price
+BEV-001,Spark Cola,Brand1,Carbonated,1000,27
+BEV-002,Fizz Lime,Brand1,Carbonated,250,67
+BEV-003,Cola Max,Brand1,Carbonated,500,35
+BEV-004,Orange Pop,Brand1,Carbonated,250,28
+BEV-005,Fresh Orange,Brand2,Juice,1000,26
+BEV-006,Mango Splash,Brand2,Juice,1000,67
+BEV-007,Berry Blend,Brand2,Juice,1000,25
+BEV-008,Apple Delight,Brand2,Juice,1000,47
+BEV-009,Pure Water,Brand3,Water,250,21
+BEV-010,Spark Water,Brand3,Water,250,33
+BEV-011,Mineral Drop,Brand3,Water,250,52
+BEV-012,Aqua Fresh,Brand3,Water,1000,21
+BEV-013,Energy Rush,Brand4,Energy,1000,32
+BEV-014,Power Bolt,Brand4,Energy,1000,61
+BEV-015,Volt X,Brand4,Energy,1000,54
+BEV-016,Charge Up,Brand4,Energy,500,34
+BEV-017,Milk Plus,Brand5,Dairy,500,57
+BEV-018,Choco Milk,Brand5,Dairy,500,71
+BEV-019,Protein Shake,Brand5,Dairy,250,68
+BEV-020,Yogurt Drink,Brand5,Dairy,250,64
