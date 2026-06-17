@@ -9,15 +9,11 @@ from utils import (
     InsightGenerator
 )
 
-# -----------------------------
 # Logging
-# -----------------------------
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# -----------------------------
-# Streamlit Config
-# -----------------------------
+# Page Config
 st.set_page_config(
     page_title="AI-Powered FMCG Analytics Assistant",
     page_icon="📊",
@@ -26,31 +22,25 @@ st.set_page_config(
 
 st.title("📊 AI-Powered FMCG Analytics Assistant")
 
-# -----------------------------
-# Session State Initialization
-# -----------------------------
+# Session State
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
 if "api_key" not in st.session_state:
     st.session_state.api_key = None
 
-# -----------------------------
 # Sidebar
-# -----------------------------
 with st.sidebar:
     st.header("About")
-    st.write(
-        """
-        A conversational AI assistant for FMCG business analytics.
+    st.write("""
+A conversational AI assistant for FMCG business analytics.
 
-        Ask natural language questions about:
-        - Sales
-        - Promotions
-        - Inventory
-        - Regional Performance
-        """
-    )
+Ask natural language questions about:
+- Sales
+- Promotions
+- Inventory
+- Regional Performance
+""")
 
     st.subheader("Example Questions")
 
@@ -63,10 +53,10 @@ with st.sidebar:
         "Which store formats performed best?"
     ]
 
-    for question in example_questions:
-        if st.button(question):
+    for q in example_questions:
+        if st.button(q):
             st.session_state.messages.append(
-                {"role": "user", "content": question}
+                {"role": "user", "content": q}
             )
 
     st.subheader("Database Statistics")
@@ -83,26 +73,22 @@ with st.sidebar:
         st.session_state.messages = []
         st.rerun()
 
-# -----------------------------
-# API Key Section
-# -----------------------------
+# API Key
 if not st.session_state.api_key:
-    st.info("Please enter your Google Gemini API key to get started.")
+    st.info("Please enter your Gemini API key.")
 
-    api_key_input = st.text_input(
+    api_key = st.text_input(
         "Gemini API Key",
         type="password"
     )
 
-    if api_key_input:
-        st.session_state.api_key = api_key_input
+    if api_key:
+        st.session_state.api_key = api_key
         st.rerun()
 
     st.stop()
 
-# -----------------------------
-# Display Chat History
-# -----------------------------
+# Display History
 for message in st.session_state.messages:
 
     with st.chat_message(message["role"]):
@@ -114,10 +100,7 @@ for message in st.session_state.messages:
                 st.code(message["sql"], language="sql")
 
         if "data" in message:
-            st.dataframe(
-                message["data"],
-                hide_index=True
-            )
+            st.dataframe(message["data"], hide_index=True)
 
         if "chart" in message and message["chart"] is not None:
             st.plotly_chart(
@@ -129,16 +112,13 @@ for message in st.session_state.messages:
             with st.expander("Business Insights"):
                 st.markdown(message["insights"])
 
-# -----------------------------
 # User Input
-# -----------------------------
 user_input = st.chat_input(
     "Ask a question about FMCG data..."
 )
 
 if user_input:
 
-    # Display User Message
     st.session_state.messages.append(
         {
             "role": "user",
@@ -149,13 +129,11 @@ if user_input:
     with st.chat_message("user"):
         st.markdown(user_input)
 
-    # Assistant Response
     with st.chat_message("assistant"):
 
         try:
-            with st.spinner("Processing your request..."):
+            with st.spinner("Processing..."):
 
-                # Initialize Components
                 llm = LLMHandler(
                     api_key=st.session_state.api_key
                 )
@@ -170,47 +148,35 @@ if user_input:
 
                 insight_generator = InsightGenerator(llm)
 
-                # -----------------------------
-                # Step 1: Generate SQL
-                # -----------------------------
-                sql = sql_generator.generate_sql(
-                    user_input
-                )
+                # Generate SQL
+                sql = sql_generator.generate_sql(user_input)
 
-                # -----------------------------
-                # Step 2: Validate SQL
-                # -----------------------------
-                is_valid, validation_error = (
-                    sql_validator.validate(sql)
-                )
+                # DEBUG
+                st.subheader("🔍 Generated SQL")
+                st.code(sql, language="sql")
+
+                # Validate SQL
+                is_valid, error = sql_validator.validate(sql)
 
                 if not is_valid:
 
-                    error_message = (
-                        f"Validation Error: "
-                        f"{validation_error}"
+                    st.error(
+                        f"Validation Error: {error}"
                     )
-
-                    st.error(error_message)
 
                     st.session_state.messages.append(
                         {
                             "role": "assistant",
-                            "content": (
-                                "Sorry, I encountered "
-                                f"an issue: {validation_error}"
-                            )
+                            "content":
+                            f"Validation Error: {error}",
+                            "sql": sql
                         }
                     )
 
                 else:
 
-                    # -----------------------------
-                    # Step 3: Execute Query
-                    # -----------------------------
-                    df, query_error = (
-                        query_executor.execute(sql)
-                    )
+                    # Execute Query
+                    df, query_error = query_executor.execute(sql)
 
                     if query_error:
 
@@ -221,56 +187,47 @@ if user_input:
                         st.session_state.messages.append(
                             {
                                 "role": "assistant",
-                                "content": (
-                                    "Sorry, I couldn't "
-                                    "execute that query: "
-                                    f"{query_error}"
-                                )
+                                "content":
+                                f"Query Error: {query_error}",
+                                "sql": sql
                             }
                         )
 
                     elif df is None or df.empty:
 
                         st.warning(
-                            "No results found "
-                            "for your query."
+                            "No results found."
                         )
 
                         st.session_state.messages.append(
                             {
                                 "role": "assistant",
-                                "content": (
-                                    "No results found "
-                                    "for your query."
-                                ),
+                                "content":
+                                "No results found.",
                                 "sql": sql
                             }
                         )
 
                     else:
 
-                        # -----------------------------
-                        # Step 4: Visualization
-                        # -----------------------------
+                        # Visualization
                         fig = visualizer.create_chart(df)
 
-                        # -----------------------------
-                        # Step 5: Insights
-                        # -----------------------------
+                        # Insights
                         insights = (
-                            insight_generator.generate_insights(
+                            insight_generator
+                            .generate_insights(
                                 user_input,
                                 sql,
                                 df
                             )
                         )
 
-                        response_message = (
+                        response = (
                             "Here's what I found!"
                         )
 
-                        # Display Output
-                        st.markdown(response_message)
+                        st.markdown(response)
 
                         with st.expander(
                             "Generated SQL"
@@ -299,11 +256,10 @@ if user_input:
                                     insights
                                 )
 
-                        # Save Chat
                         st.session_state.messages.append(
                             {
                                 "role": "assistant",
-                                "content": response_message,
+                                "content": response,
                                 "sql": sql,
                                 "data": df,
                                 "chart": fig,
@@ -314,7 +270,7 @@ if user_input:
         except Exception as e:
 
             logger.error(
-                f"Unexpected error: {str(e)}",
+                str(e),
                 exc_info=True
             )
 
@@ -325,9 +281,7 @@ if user_input:
             st.session_state.messages.append(
                 {
                     "role": "assistant",
-                    "content": (
-                        "Sorry, I encountered "
-                        f"an error: {str(e)}"
-                    )
+                    "content":
+                    f"An error occurred: {str(e)}"
                 }
             )
