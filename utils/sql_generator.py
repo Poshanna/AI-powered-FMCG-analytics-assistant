@@ -1,6 +1,4 @@
-
 import logging
-from typing import Tuple
 from .llm import LLMHandler
 
 logger = logging.getLogger(__name__)
@@ -58,75 +56,112 @@ Table Relationships:
 """
 
 EXAMPLE_QUERIES = """
-Example queries:
+Example Queries:
+
 1. Which region generated the highest revenue?
-SELECT region, SUM(revenue) AS total_revenue
+SELECT region,
+       SUM(revenue) AS total_revenue
 FROM sales
 GROUP BY region
 ORDER BY total_revenue DESC
 LIMIT 1;
 
 2. Compare North and South sales.
-SELECT region, SUM(revenue) AS total_revenue, SUM(units_sold) AS total_units
+SELECT region,
+       SUM(revenue) AS total_revenue,
+       SUM(units_sold) AS total_units
 FROM sales
 WHERE region IN ('North', 'South')
 GROUP BY region;
 
 3. Which products had the highest stockouts?
-SELECT p.product_name, COUNT(*) AS stockout_count
+SELECT p.product_name,
+       COUNT(*) AS stockout_count
 FROM inventory i
-JOIN products p ON i.product_id = p.product_id
+JOIN products p
+    ON i.product_id = p.product_id
 WHERE i.stockout_flag = 1
 GROUP BY p.product_name
 ORDER BY stockout_count DESC;
 
 4. Did BOGO promotions improve sales?
-SELECT 
-    s.promotion_type,
-    AVG(s.units_sold) AS avg_units_sold,
-    AVG(s.revenue) AS avg_revenue
-FROM sales s
-WHERE s.promotion_type = 'BOGO' OR s.promotion_flag = 0
-GROUP BY s.promotion_type, s.promotion_flag;
+SELECT promotion_type,
+       AVG(units_sold) AS avg_units_sold,
+       AVG(revenue) AS avg_revenue
+FROM sales
+WHERE promotion_type = 'BOGO'
+GROUP BY promotion_type;
 """
+
 
 class SQLGenerator:
+    """
+    Converts natural language questions into SQLite SELECT queries.
+    """
+
     def __init__(self, llm_handler: LLMHandler):
         self.llm = llm_handler
-    
-    def generate_sql(self, user_question: str) -> str:
-        prompt = f"""
-You are a SQLite query generator. Your task is to convert natural language questions about FMCG data into valid SQLite SELECT statements.
 
+    def generate_sql(self, user_question: str) -> str:
+        """
+        Generate a SQL query from a natural language question.
+        """
+
+        prompt = f"""
+You are an expert SQLite query generator.
+
+Convert the user's question into a VALID SQLite SELECT query.
+
+DATABASE SCHEMA:
 {DATABASE_SCHEMA}
 
+EXAMPLE QUERIES:
 {EXAMPLE_QUERIES}
 
-IMPORTANT RULES:
-1. Only generate SELECT statements - NO INSERT, UPDATE, DELETE, DROP, ALTER, or CREATE statements allowed.
-2. Use only SQLite syntax.
-3. Ensure all table and column names exactly match the schema provided.
-4. Always use proper JOIN syntax when combining tables are needed.
-5. Do not include any explanations or extra text, only the SQL query.
-6. For date comparisons, use date strings in 'YYYY-MM-DD' format.
-7. Handle NULL values appropriately.
-8. Use meaningful aliases for aggregated columns.
+STRICT RULES:
+1. Return ONLY the SQL query.
+2. The output MUST start with SELECT.
+3. Do NOT include explanations.
+4. Do NOT include markdown code blocks.
+5. Do NOT include words like "sqlite", "SQL Query", etc.
+6. Only generate SELECT statements.
+7. Never generate INSERT, UPDATE, DELETE, DROP, ALTER, CREATE, or TRUNCATE statements.
+8. Use exact table and column names from the schema.
+9. Use JOINs when necessary.
+10. Use meaningful aliases.
 
-User Question: {user_question}
-
-Output only the SQL query:
+User Question:
+{user_question}
 """
-        
+
         try:
-            sql = self.llm.generate(prompt, temperature=0.0)
+            response = self.llm.generate(
+                prompt,
+                temperature=0.0
+            )
+
+            sql = response.strip()
+
+            # Remove markdown blocks
+            sql = sql.replace("```sql", "")
+            sql = sql.replace("```", "")
+
+            # Remove extra prefixes before SELECT
+            upper_sql = sql.upper()
+
+            if "SELECT" in upper_sql:
+                start_index = upper_sql.find("SELECT")
+                sql = sql[start_index:]
+
+            # Remove trailing semicolons/newlines
             sql = sql.strip()
-            if sql.startswith("```sql"):
-                sql = sql[6:]
-            if sql.startswith("```"):
-                sql = sql[3:]
-            if sql.endswith("```"):
-                sql = sql[:-3]
-            return sql.strip()
+
+            logger.info(f"Generated SQL: {sql}")
+
+            return sql
+
         except Exception as e:
-            logger.error(f"SQL generation failed: {str(e)}")
+            logger.error(
+                f"SQL generation failed: {str(e)}"
+            )
             raise
