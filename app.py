@@ -74,18 +74,16 @@ Ask natural language questions about:
         st.rerun()
 
 # API Key
-if not st.session_state.api_key:
-    st.info("Please enter your Gemini API key.")
-
-    api_key = st.text_input(
-        "Gemini API Key",
-        type="password"
+# -----------------------------
+# Gemini API Key
+# -----------------------------
+if "GEMINI_API_KEY" in st.secrets:
+    st.session_state.api_key = st.secrets["GEMINI_API_KEY"]
+else:
+    st.error(
+        "Gemini API key is not configured. "
+        "Please add it in Streamlit Secrets."
     )
-
-    if api_key:
-        st.session_state.api_key = api_key
-        st.rerun()
-
     st.stop()
 
 # Display History
