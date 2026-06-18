@@ -312,8 +312,3 @@ Planned improvements include:
 
 ### Poshanna Durki
 
-
-
-## 📜 License
-
-This project was developed as part of an AI Engineering Internship Assessment and is intended for educational, demonstration, and evaluation purposes.
