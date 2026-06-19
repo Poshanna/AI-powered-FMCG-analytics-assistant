@@ -280,7 +280,7 @@ During development, several challenges were encountered:
 - Designing a secure SQL validation mechanism.
 - Creating realistic synthetic datasets without access to real FMCG data.
 - Deploying API-driven applications using Streamlit Secrets.
-
+- Dataset creation.
 ---
 
 ## 📈 Business Impact
