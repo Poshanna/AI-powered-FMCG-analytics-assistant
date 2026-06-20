@@ -198,7 +198,6 @@ The assistant can answer questions such as:
 - What were the top-selling products?
 - Which store formats performed best?
 - Which categories generated the highest revenue?
-- Identify trends in weekly sales performance.
 
 ---
 
