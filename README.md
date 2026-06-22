@@ -305,9 +305,3 @@ Planned improvements include:
 - Role-based authentication and authorization.
 - Fallback SQL generation mechanisms.
 
----
-
-## 👨‍💻 Author
-
-### Poshanna Durki
-
